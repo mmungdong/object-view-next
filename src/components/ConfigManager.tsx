@@ -1,11 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { StorageConfig } from '../types/storage';
 
 interface ConfigManagerProps {
   onConfigChange: (config: StorageConfig | null) => void;
+  onAddNew?: () => void; // 外部触发添加新配置的回调
+  showAddButton?: boolean; // 是否显示添加配置按钮，默认为true
+  triggerAddNew?: boolean; // 外部触发添加新配置的标志
 }
 
-export default function ConfigManager({ onConfigChange }: ConfigManagerProps) {
+export default function ConfigManager({
+  onConfigChange,
+  onAddNew,
+  showAddButton = true,
+  triggerAddNew = false
+}: ConfigManagerProps) {
   const [configs, setConfigs] = useState<StorageConfig[]>(() => {
     const savedConfigs = localStorage.getItem('storageConfigs');
     if (savedConfigs) {
@@ -40,6 +48,19 @@ export default function ConfigManager({ onConfigChange }: ConfigManagerProps) {
     const config = configs.find(c => c.id === currentConfigId) || null;
     onConfigChange(config);
   }, [configs, currentConfigId, onConfigChange]);
+
+  // 监听外部触发的添加新配置请求
+  useEffect(() => {
+    if (triggerAddNew) {
+      handleAddNew();
+      // 重置triggerAddNew状态，避免重复触发
+      // 注意：由于triggerAddNew是来自props的值，我们不能直接修改它
+      // 但我们可以通过回调通知父组件重置状态
+      if (onAddNew) {
+        onAddNew();
+      }
+    }
+  }, [triggerAddNew, onAddNew]);
 
   // 当 configs 改变时，保存到 localStorage
   useEffect(() => {
@@ -157,12 +178,14 @@ export default function ConfigManager({ onConfigChange }: ConfigManagerProps) {
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">存储配置管理</h2>
-        <button
-          onClick={handleAddNew}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
-        >
-          添加配置
-        </button>
+        {showAddButton && (
+          <button
+            onClick={handleAddNew}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            添加配置
+          </button>
+        )}
       </div>
 
       {configs.length > 0 && (

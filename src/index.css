@@ -3,6 +3,19 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --primary: 59 130 246; /* #3b82f6 */
+    --secondary: 139 92 246; /* #8b5cf6 */
+    --success: 16 185 129; /* #10b981 */
+    --warning: 245 158 11; /* #f59e0b */
+    --destructive: 239 68 68; /* #ef4444 */
+    --info: 6 182 212; /* #06b6d4 */
+    --dark: 31 41 55; /* #1f2937 */
+    --light: 243 244 246; /* #f3f4f6 */
+  }
+}
+
+@layer base {
   html {
     font-family: Inter, system-ui, sans-serif;
     color: #262626; /* neutral-800 */
@@ -176,17 +189,19 @@
     transform: scale(0.95);
   }
 
+  .btn-gradient-primary {
+    background-image: linear-gradient(135deg, rgb(var(--primary)) 0%, rgb(39, 110, 226) 100%);
+  }
+
+  .btn-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
   .loading-spinner {
     animation: spin 1s linear infinite;
     height: 1.25rem; /* 20px */
     width: 1.25rem; /* 20px */
     color: #3B82F6; /* primary */
-  }
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
   }
 
   .text-truncate-2 {
@@ -200,5 +215,34 @@
 @layer utilities {
   .content-auto {
     content-visibility: auto;
+  }
+
+  .shadow-btn {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .shadow-btn-hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .shadow-btn-active {
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
+}
+
+@layer base {
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
   }
 }

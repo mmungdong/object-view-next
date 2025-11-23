@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,9 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#3B82F6',
-        secondary: '#10B981',
-        danger: '#EF4444',
+        primary: 'rgb(var(--primary) / <alpha-value>)',
+        secondary: 'rgb(var(--secondary) / <alpha-value>)',
+        success: 'rgb(var(--success) / <alpha-value>)',
+        warning: 'rgb(var(--warning) / <alpha-value>)',
+        destructive: 'rgb(var(--destructive) / <alpha-value>)',
+        info: 'rgb(var(--info) / <alpha-value>)',
+        dark: 'rgb(var(--dark) / <alpha-value>)',
+        light: 'rgb(var(--light) / <alpha-value>)',
+        danger: 'rgb(var(--destructive) / <alpha-value>)',
         neutral: {
           50: '#FAFAFA',
           100: '#F5F5F5',

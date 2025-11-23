@@ -177,7 +177,7 @@ export default function ShowcasePage() {
                 A curated collection of stunning imagery that captures the beauty and diversity of our world.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button size="lg" className="rounded-full px-8">
+                <Button size="lg" variant="gradient" className="rounded-full px-8">
                   Explore Gallery
                 </Button>
                 <Button variant="outline" size="lg" className="rounded-full px-8">
