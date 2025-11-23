@@ -86,14 +86,14 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-full flex flex-col">
+    <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
         {/* 头部 */}
-        <div className="flex justify-between items-center border-b p-4">
-          <h2 className="text-lg font-semibold truncate">{file.name}</h2>
+        <div className="flex justify-between items-center border-b border-neutral-200 p-4">
+          <h2 className="text-lg font-semibold text-neutral-800 truncate">{file.name}</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-neutral-500 hover:text-neutral-700"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -102,23 +102,23 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
         </div>
 
         {/* 文件信息 */}
-        <div className="p-4 border-b">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+        <div className="p-4 border-b border-neutral-200">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
             <div>
-              <span className="text-gray-500">大小:</span>
-              <span className="ml-1">{formatFileSize(file.size)}</span>
+              <span className="text-neutral-600">大小:</span>
+              <span className="ml-2 text-neutral-800">{formatFileSize(file.size)}</span>
             </div>
             <div>
-              <span className="text-gray-500">修改时间:</span>
-              <span className="ml-1">{formatDate(file.lastModified)}</span>
+              <span className="text-neutral-600">修改时间:</span>
+              <span className="ml-2 text-neutral-800">{formatDate(file.lastModified)}</span>
             </div>
             <div>
-              <span className="text-gray-500">类型:</span>
-              <span className="ml-1">{file.isFolder ? '文件夹' : file.name.split('.').pop()?.toUpperCase()}</span>
+              <span className="text-neutral-600">类型:</span>
+              <span className="ml-2 text-neutral-800">{file.isFolder ? '文件夹' : file.name.split('.').pop()?.toUpperCase()}</span>
             </div>
             <div>
-              <span className="text-gray-500">路径:</span>
-              <span className="ml-1 truncate">{file.key}</span>
+              <span className="text-neutral-600">路径:</span>
+              <span className="ml-2 text-neutral-800 truncate">{file.key}</span>
             </div>
           </div>
         </div>
@@ -127,13 +127,24 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
         <div className="flex-1 overflow-auto p-4">
           {loading && (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+              <div className="loading-spinner"></div>
+              <span className="ml-3 text-neutral-600">加载中...</span>
             </div>
           )}
 
           {error && (
-            <div className="text-center py-8">
-              <p className="text-red-500">{error}</p>
+            <div className="text-center py-12">
+              <svg className="mx-auto h-16 w-16 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <h3 className="mt-4 text-lg font-medium text-neutral-800">加载失败</h3>
+              <p className="mt-2 text-neutral-600">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-4 btn-primary px-4 py-2"
+              >
+                重试
+              </button>
             </div>
           )}
 
@@ -144,7 +155,8 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
                 <div className="flex justify-center">
                   {imageLoading && (
                     <div className="flex items-center justify-center h-64">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                      <div className="loading-spinner"></div>
+                      <span className="ml-3 text-neutral-600">图片加载中...</span>
                     </div>
                   )}
                   <div className="relative">
@@ -167,7 +179,7 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
               {/* PDF 预览 */}
               {content === 'pdf' && (
                 <div className="text-center">
-                  <p className="mb-4">PDF 文件预览</p>
+                  <p className="mb-4 text-neutral-600">PDF 文件预览</p>
                   <iframe
                     src={fileUrl}
                     className="w-full h-[70vh]"
@@ -178,25 +190,29 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
 
               {/* 文本内容预览 */}
               {content && content !== 'image' && content !== 'pdf' && (
-                <div className="border rounded p-4 bg-gray-50">
-                  <pre className="whitespace-pre-wrap break-words">{content}</pre>
+                <div className="border border-neutral-200 rounded p-4 bg-neutral-50">
+                  <pre className="whitespace-pre-wrap break-words text-neutral-800">{content}</pre>
                 </div>
               )}
 
               {/* 不支持预览的文件 */}
               {!content && !file.isFolder && (
-                <div className="text-center py-8">
-                  <p className="mb-4">此文件类型不支持预览</p>
-                  <div className="flex justify-center space-x-4">
+                <div className="text-center py-12">
+                  <svg className="mx-auto h-16 w-16 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <h3 className="mt-4 text-lg font-medium text-neutral-800">文件预览不可用</h3>
+                  <p className="mt-2 text-neutral-600">此文件类型不支持预览</p>
+                  <div className="mt-6 flex justify-center gap-3">
                     <button
                       onClick={handleOpenInNewTab}
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
+                      className="btn-primary px-4 py-2"
                     >
                       在新标签页中打开
                     </button>
                     <button
                       onClick={handleDownload}
-                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition-colors"
+                      className="btn-secondary px-4 py-2"
                     >
                       下载文件
                     </button>
@@ -206,8 +222,12 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
 
               {/* 文件夹 */}
               {file.isFolder && (
-                <div className="text-center py-8">
-                  <p>这是一个文件夹</p>
+                <div className="text-center py-12">
+                  <svg className="mx-auto h-16 w-16 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                  </svg>
+                  <h3 className="mt-4 text-lg font-medium text-neutral-800">文件夹</h3>
+                  <p className="mt-2 text-neutral-600">这是一个文件夹，无法直接预览</p>
                 </div>
               )}
             </>
@@ -215,10 +235,10 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
         </div>
 
         {/* 底部操作按钮 */}
-        <div className="border-t p-4 flex justify-end space-x-2">
+        <div className="border-t border-neutral-200 p-4 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition-colors"
+            className="btn-neutral px-4 py-2"
           >
             关闭
           </button>
@@ -226,13 +246,13 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
             <>
               <button
                 onClick={handleOpenInNewTab}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
+                className="btn-primary px-4 py-2"
               >
                 在新标签页中打开
               </button>
               <button
                 onClick={handleDownload}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition-colors"
+                className="btn-secondary px-4 py-2"
               >
                 下载
               </button>
