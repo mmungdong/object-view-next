@@ -343,18 +343,29 @@ export class OssStorageService implements StorageService {
   }
 
   getFileUrl(key: string): string {
-    // 对于公有读存储桶，直接返回公开访问 URL
-    if (this.config.accessType === 'public') {
-      return `https://${this.config.bucket}.oss-${this.config.region}.aliyuncs.com/${key}`;
-    }
-
     // 对于私有存储桶，需要生成带签名的 URL
-    if (!this.oss) {
-      throw new Error('OSS 私有存储桶需要 AccessKey 和 SecretKey');
+    if (this.config.accessType === 'private') {
+      if (!this.oss) {
+        throw new Error('OSS 私有存储桶需要 AccessKey 和 SecretKey');
+      }
+
+      // 生成签名 URL，有效期 1 小时
+      return this.oss.signatureUrl(key, { expires: 3600 });
     }
 
-    // 生成签名 URL，有效期 1 小时
-    return this.oss.signatureUrl(key, { expires: 3600 });
+    // 对于公有读存储桶，优先尝试生成签名URL（如果有AK/SK的话）
+    // 这样可以处理那些即使是公有存储桶也需要临时签名的情况
+    if (this.oss) {
+      try {
+        // 生成签名 URL，有效期 1 小时
+        return this.oss.signatureUrl(key, { expires: 3600 });
+      } catch (error) {
+        console.warn('Failed to generate signed URL, falling back to public URL:', error);
+      }
+    }
+
+    // 回退到公开访问 URL
+    return `https://${this.config.bucket}.oss-${this.config.region}.aliyuncs.com/${key}`;
   }
 }
 

@@ -86,12 +86,14 @@ export default function FileBrowser({ config }: FileBrowserProps) {
 
   // 进入文件夹
   const enterFolder = (folderName: string) => {
-    const newPath = currentPath + folderName + '/';
+    // Ensure folderName doesn't already end with a slash
+    const cleanFolderName = folderName.endsWith('/') ? folderName.slice(0, -1) : folderName;
+    const newPath = currentPath + cleanFolderName + '/';
     setCurrentPath(newPath);
 
     // 更新面包屑
     const newBreadcrumb = {
-      name: folderName,
+      name: cleanFolderName,
       path: newPath
     };
     setBreadcrumbs([...breadcrumbs, newBreadcrumb]);
@@ -133,7 +135,13 @@ export default function FileBrowser({ config }: FileBrowserProps) {
 
   // 当配置或路径改变时重新加载文件
   useEffect(() => {
-    loadFiles(currentPath);
+    // Add error boundary to prevent blank page
+    try {
+      loadFiles(currentPath);
+    } catch (error) {
+      console.error('Error in useEffect:', error);
+      setError('页面加载出错，请刷新页面重试');
+    }
   }, [currentPath, loadFiles]);
 
   if (!config) {

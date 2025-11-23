@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { FileInfo } from '../types/storage';
 import { formatFileSize, formatDate } from '../utils/formatters';
+import { isImageFile } from '../utils/fileUtils';
 
 interface FilePreviewProps {
   file: FileInfo;
@@ -12,6 +13,7 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [imageLoading, setImageLoading] = useState(true);
 
   useEffect(() => {
     const loadContent = async () => {
@@ -25,19 +27,27 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
           return;
         }
 
-        const extension = file.name.split('.').pop()?.toLowerCase() || '';
-
-        // 图片文件
-        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+        // 图片文件 - 保持与FileList一致的图片格式
+        if (isImageFile(file.name)) {
           setContent('image');
           return;
         }
 
+        const extension = file.name.split('.').pop()?.toLowerCase() || '';
+
         // 文本文件
         if (['txt', 'md', 'js', 'ts', 'jsx', 'tsx', 'css', 'html', 'json', 'xml'].includes(extension)) {
-          const response = await fetch(fileUrl);
-          const text = await response.text();
-          setContent(text);
+          try {
+            const response = await fetch(fileUrl);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const text = await response.text();
+            setContent(text);
+          } catch (error) {
+            console.error('Failed to fetch text file:', error);
+            setError('无法加载文件内容');
+          }
           return;
         }
 
@@ -130,11 +140,25 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
               {/* 图片预览 */}
               {content === 'image' && (
                 <div className="flex justify-center">
-                  <img
-                    src={fileUrl}
-                    alt={file.name}
-                    className="max-w-full max-h-[70vh] object-contain"
-                  />
+                  {imageLoading && (
+                    <div className="flex items-center justify-center h-64">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                    </div>
+                  )}
+                  <div className="relative">
+                    <img
+                      src={fileUrl}
+                      alt={file.name}
+                      className={`max-w-full max-h-[70vh] object-contain ${imageLoading ? 'hidden' : ''}`}
+                      onLoad={() => setImageLoading(false)}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null;
+                        setImageLoading(false);
+                        setError('图片加载失败，请检查文件是否损坏或网络连接');
+                      }}
+                    />
+                  </div>
                 </div>
               )}
 
