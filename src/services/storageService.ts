@@ -139,6 +139,13 @@ export class OssStorageService implements StorageService {
           });
         }
 
+        // 调试信息：打印所有文件信息
+        console.log('ListFiles result for prefix:', prefix, 'Files count:', files.length);
+        files.forEach((file, index) => {
+          console.log(`File ${index}:`, file.name, 'Key:', file.key, 'IsImage:',
+            !file.isFolder && /\.(jpe?g|png|gif|webp|bmp|tiff|svg)$/i.test(file.name));
+        });
+
         return files;
       } catch (error) {
         console.error('OSS public listFiles error - Full error details:', {
@@ -343,9 +350,21 @@ export class OssStorageService implements StorageService {
   }
 
   getFileUrl(key: string): string {
+    // 等待初始化完成后再生成 URL
+    if (this.initializationPromise) {
+      // 注意：这里我们不等待 Promise，因为这是一个同步方法
+      // 但在实际使用中，应该确保初始化已经完成
+      console.log('getFileUrl called, initialization status:', !!this.oss);
+    }
+
     // 对于私有存储桶，需要生成带签名的 URL
     if (this.config.accessType === 'private') {
       if (!this.oss) {
+        // 如果 OSS 客户端还没有初始化完成，我们尝试使用配置信息直接生成 URL
+        // 这是一个临时的解决方案，实际应该确保初始化完成
+        if (this.config.accessKey && this.config.secretKey) {
+          console.warn('OSS client not initialized yet, but we have credentials. URL might fail.');
+        }
         throw new Error('OSS 私有存储桶需要 AccessKey 和 SecretKey');
       }
 

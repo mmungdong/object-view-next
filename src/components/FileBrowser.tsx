@@ -15,18 +15,53 @@ export default function FileBrowser({ config }: FileBrowserProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [layout, setLayout] = useState<'grid' | 'list'>('grid');
+  const [storageServiceReady, setStorageServiceReady] = useState(false);
 
   // 创建存储服务实例
   const storageService = config ? createStorageService(config) : null;
 
+  // 检查 storageService 是否已经初始化完成
+  useEffect(() => {
+    if (storageService) {
+      // 检查初始化状态
+      const checkInitialization = async () => {
+        try {
+          // 等待初始化完成
+          if ((storageService as any).waitForInitialization) {
+            await (storageService as any).waitForInitialization();
+          }
+          setStorageServiceReady(true);
+          console.log('Storage service initialized successfully');
+        } catch (error) {
+          console.error('Failed to initialize storage service:', error);
+          setError('存储服务初始化失败');
+        }
+      };
+
+      checkInitialization();
+    } else {
+      setStorageServiceReady(false);
+    }
+  }, [storageService, config]);
+
   // 获取文件 URL 的函数
   const getFileUrl = useCallback((key: string): string => {
-    if (!config) {
+    if (!config || !storageService) {
       return '';
     }
-    const storageService = createStorageService(config);
-    return storageService.getFileUrl(key);
-  }, [config]);
+
+    // 检查 storageService 是否已经初始化完成
+    // 对于私有存储桶，我们需要确保 OSS 客户端已经创建
+    try {
+      const url = storageService.getFileUrl(key);
+      console.log('Generated URL for key:', key, 'URL:', url);
+      return url;
+    } catch (error) {
+      console.error('Error generating URL for key:', key, 'Error:', error);
+      // 如果获取 URL 失败，返回一个默认的占位 URL 或空字符串
+      return '';
+    }
+  }, [config, storageService]);
 
   // 加载文件列表
   const loadFiles = useCallback(async (prefix: string) => {
@@ -37,8 +72,11 @@ export default function FileBrowser({ config }: FileBrowserProps) {
 
     try {
       console.log('Attempting to load files with config:', config);
-      const storageService = createStorageService(config);
-      console.log('Storage service created, calling listFiles with prefix:', prefix);
+      if (!storageService) {
+        console.error('Storage service is not initialized');
+        throw new Error('Storage service is not initialized');
+      }
+      console.log('Using existing storage service, calling listFiles with prefix:', prefix);
 
       // 添加超时机制，防止请求挂起
       const timeoutPromise = new Promise<never>((_, reject) => {
@@ -188,13 +226,20 @@ export default function FileBrowser({ config }: FileBrowserProps) {
         </div>
       )}
 
-      {!loading && !error && (
+      {!loading && !error && storageServiceReady && (
         <FileList
           files={files}
           layout={layout}
           onEnterFolder={enterFolder}
           getFileUrl={getFileUrl}
         />
+      )}
+
+      {!loading && !error && !storageServiceReady && (
+        <div className="flex justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <span className="ml-2 text-gray-600">初始化存储服务...</span>
+        </div>
       )}
     </div>
   );

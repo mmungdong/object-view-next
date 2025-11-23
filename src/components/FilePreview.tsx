@@ -29,6 +29,8 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
 
         // 图片文件 - 保持与FileList一致的图片格式
         if (isImageFile(file.name)) {
+          // 调试信息：打印图片URL
+          console.log('Preview - Image file detected:', file.name, 'Key:', file.key, 'Generated URL:', fileUrl);
           setContent('image');
           return;
         }

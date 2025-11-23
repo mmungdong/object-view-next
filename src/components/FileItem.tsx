@@ -16,6 +16,12 @@ export default function FileItem({ file, layout, onEnterFolder, getFileUrl }: Fi
   const [imageError, setImageError] = useState(false);
   const isImage = !file.isFolder && isImageFile(file.name);
 
+  // 调试信息：打印图片URL
+  if (isImage) {
+    const imageUrl = getFileUrl(file.key);
+    console.log('Image file detected:', file.name, 'Key:', file.key, 'Generated URL:', imageUrl);
+  }
+
   const handleFileClick = () => {
     if (file.isFolder) {
       onEnterFolder(file.name);
