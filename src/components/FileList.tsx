@@ -25,7 +25,7 @@ export default function FileList({ files, layout, onEnterFolder, getFileUrl }: F
   }
 
   return (
-    <div className={layout === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4' : 'space-y-2'}>
+    <div className={layout === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4' : 'space-y-3'}>
       {displayFiles.map((file) => (
         <FileItem
           key={file.key}

@@ -3,6 +3,7 @@ import type { FileInfo } from '../types/storage';
 import { formatFileSize, formatDate } from '../utils/formatters';
 import { isImageFile } from '../utils/fileUtils';
 import FilePreview from './FilePreview';
+import { Folder, FileText, Image } from 'lucide-react';
 
 interface FileItemProps {
   file: FileInfo;
@@ -36,17 +37,15 @@ export default function FileItem({ file, layout, onEnterFolder, getFileUrl }: Fi
       <>
         <div
           onClick={handleFileClick}
-          className={`flex items-center p-3 rounded-lg border cursor-pointer transition-colors hover:bg-gray-50 ${
-            file.isFolder ? 'hover:bg-blue-50' : 'hover:bg-gray-50'
-          }`}
+          className={`flex items-center p-4 rounded-lg border cursor-pointer transition-colors hover:bg-secondary/50 ${
+            file.isFolder ? 'hover:border-primary' : 'hover:border-accent'
+          } border-border bg-card`}
         >
-          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center mr-3">
+          <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center mr-4">
             {file.isFolder ? (
-              <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-              </svg>
+              <Folder className="w-6 h-6 text-primary" />
             ) : isImage ? (
-              <div className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded overflow-hidden">
+              <div className="w-10 h-10 flex items-center justify-center rounded overflow-hidden">
                 <img
                   src={getFileUrl(file.key)}
                   alt={file.name}
@@ -59,30 +58,24 @@ export default function FileItem({ file, layout, onEnterFolder, getFileUrl }: Fi
                     // The fallback icon is already in the DOM, we just need to show it
                     const parent = target.parentElement;
                     if (parent) {
-                      parent.innerHTML = `
-                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      `;
+                      parent.innerHTML = `<Image class="w-6 h-6 text-accent" />`;
                     }
                   }}
                 />
               </div>
             ) : (
-              <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+              <FileText className="w-6 h-6 text-muted-foreground" />
             )}
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-            <p className="text-xs text-gray-500">
+            <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
+            <p className="text-xs text-muted-foreground">
               {file.isFolder ? '文件夹' : formatFileSize(file.size)}
             </p>
           </div>
 
-          <div className="text-xs text-gray-500 ml-2">
+          <div className="text-xs text-muted-foreground ml-2">
             {formatDate(file.lastModified)}
           </div>
         </div>
@@ -103,41 +96,49 @@ export default function FileItem({ file, layout, onEnterFolder, getFileUrl }: Fi
     <>
       <div
         onClick={handleFileClick}
-        className={`flex flex-col rounded-lg border cursor-pointer transition-all hover:shadow-md ${
-          file.isFolder ? 'hover:border-blue-300' : 'hover:border-gray-300'
-        }`}
+        className={`flex flex-col rounded-xl border cursor-pointer transition-all duration-300 hover:shadow-lg overflow-hidden ${
+          file.isFolder
+            ? 'border-border hover:border-primary'
+            : 'border-border hover:border-accent'
+        } bg-card`}
       >
-        <div className="flex items-center justify-center h-24 p-2">
+        <div className="flex items-center justify-center h-32 p-3 bg-muted/30">
           {file.isFolder ? (
-            <svg className="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-            </svg>
+            <div className="flex flex-col items-center justify-center text-primary">
+              <Folder className="w-12 h-12 mb-2" />
+              <span className="text-xs font-medium">文件夹</span>
+            </div>
           ) : isImage ? (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded overflow-hidden">
+            <div className="w-full h-full flex items-center justify-center rounded-lg overflow-hidden relative group">
               {!imageError ? (
-                <img
-                  src={getFileUrl(file.key)}
-                  alt={file.name}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                  onError={() => setImageError(true)}
-                />
+                <>
+                  <img
+                    src={getFileUrl(file.key)}
+                    alt={file.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                    onError={() => setImageError(true)}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </>
               ) : (
-                <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <div className="flex flex-col items-center justify-center text-muted-foreground">
+                  <Image className="w-10 h-10 mb-2" />
+                  <span className="text-xs">图片加载失败</span>
+                </div>
               )}
             </div>
           ) : (
-            <svg className="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            <div className="flex flex-col items-center justify-center text-muted-foreground">
+              <FileText className="w-12 h-12 mb-2" />
+              <span className="text-xs font-medium">文件</span>
+            </div>
           )}
         </div>
 
-        <div className="p-3 border-t">
-          <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+        <div className="p-3 border-t border-border">
+          <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
+          <div className="flex justify-between text-xs text-muted-foreground mt-1">
             <span>{file.isFolder ? '文件夹' : formatFileSize(file.size)}</span>
             <span>{formatDate(file.lastModified)}</span>
           </div>

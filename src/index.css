@@ -2,6 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Enhanced dark theme optimized for image viewing */
+    --background: 220 12% 8%; /* Deep blue-gray background */
+    --foreground: 220 10% 85%; /* Soft light gray text */
+
+    --card: 220 15% 12%; /* Slightly lighter card background */
+    --card-foreground: 220 10% 85%;
+
+    --popover: 220 15% 12%;
+    --popover-foreground: 220 10% 85%;
+
+    --primary: 175 70% 35%; /* Rich teal for primary elements */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 220 10% 85%;
+
+    --muted: 220 10% 25%;
+    --muted-foreground: 220 10% 65%;
+
+    --accent: 175 75% 40%; /* Vibrant teal accent */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 175 70% 35%;
+
+    /* For image gallery items */
+    --gallery-item-bg: 220 15% 15%;
+    --gallery-item-hover: 175 75% 40%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

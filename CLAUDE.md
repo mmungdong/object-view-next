@@ -8,6 +8,7 @@ This project is a modern React application built with Vite, TypeScript, Tailwind
 - **Framework**: React 19
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4
+- **UI Components**: ShadCN UI
 - **Code Quality**: ESLint
 
 ## Project Structure
@@ -16,11 +17,15 @@ This project is a modern React application built with Vite, TypeScript, Tailwind
 project-root/
 ├── src/
 │   ├── components/
+│   │   ├── ui/
+│   │   │   └── button.tsx
 │   │   ├── ConfigManager.tsx
 │   │   ├── FileBrowser.tsx
 │   │   ├── FileList.tsx
 │   │   ├── FileItem.tsx
 │   │   └── Breadcrumb.tsx
+│   ├── lib/
+│   │   └── utils.ts
 │   ├── hooks/
 │   ├── services/
 │   │   └── storageService.ts
@@ -137,7 +142,7 @@ npm run lint
 
 ### Tailwind CSS
 
-- `tailwind.config.js`: Main configuration file for Tailwind CSS
+- `tailwind.config.js`: Main configuration file for Tailwind CSS with ShadCN UI color palette
 - `postcss.config.js`: PostCSS configuration with Tailwind and Autoprefixer plugins
 
 **Note**: This project uses Tailwind CSS v4, which requires `@tailwindcss/postcss` as a PostCSS plugin. The configuration is different from previous versions of Tailwind CSS.
@@ -150,6 +155,13 @@ npm run lint
 
 - `vite.config.ts`: Vite build tool configuration
 
+### ShadCN UI
+
+ShadCN UI has been integrated into the project with the following structure:
+- `src/components/ui/`: Directory for ShadCN UI components
+- `src/lib/utils.ts`: Utility functions for styling with `cn` helper
+- CSS variables in `src/index.css` for consistent theming
+
 ## Scripts
 
 - `dev`: Start development server
@@ -161,6 +173,7 @@ npm run lint
 
 - TypeScript for type safety
 - Tailwind CSS v4 for styling
+- ShadCN UI for accessible and customizable components
 - ESLint for code quality
 - Vite for fast development and building
 - React 19 for UI components

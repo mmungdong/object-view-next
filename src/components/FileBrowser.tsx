@@ -3,6 +3,7 @@ import type { StorageConfig, FileInfo, BreadcrumbItem } from '../types/storage';
 import { createStorageService } from '../services/storageService';
 import FileList from './FileList';
 import Breadcrumb from './Breadcrumb';
+import { List, Grid3X3, AlertCircle } from 'lucide-react';
 
 interface FileBrowserProps {
   config: StorageConfig | null;
@@ -191,8 +192,8 @@ export default function FileBrowser({ config }: FileBrowserProps) {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
         <Breadcrumb
           items={breadcrumbs}
           onNavigate={navigateToPath}
@@ -201,28 +202,44 @@ export default function FileBrowser({ config }: FileBrowserProps) {
         />
         <button
           onClick={toggleLayout}
-          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded transition-colors"
+          className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1.5 rounded-lg transition-colors text-sm font-medium"
         >
-          {layout === 'grid' ? '列表视图' : '网格视图'}
+          {layout === 'grid' ? (
+            <>
+              <List className="w-4 h-4" />
+              列表视图
+            </>
+          ) : (
+            <>
+              <Grid3X3 className="w-4 h-4" />
+              网格视图
+            </>
+          )}
         </button>
       </div>
 
       {loading && (
-        <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          <span className="ml-2 text-gray-600">加载中...</span>
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+          <span className="ml-2 mt-3 text-muted-foreground">加载中...</span>
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-          <p>错误: {error}</p>
-          <button
-            onClick={() => loadFiles(currentPath)}
-            className="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors"
-          >
-            重新加载
-          </button>
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-4">
+          <div className="flex items-start">
+            <AlertCircle className="w-5 h-5 mt-0.5 mr-2 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="font-medium">错误</p>
+              <p className="text-sm mt-1">{error}</p>
+              <button
+                onClick={() => loadFiles(currentPath)}
+                className="mt-3 bg-destructive hover:bg-destructive/90 text-destructive-foreground px-3 py-1.5 rounded text-sm transition-colors"
+              >
+                重新加载
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -236,9 +253,9 @@ export default function FileBrowser({ config }: FileBrowserProps) {
       )}
 
       {!loading && !error && !storageServiceReady && (
-        <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          <span className="ml-2 text-gray-600">初始化存储服务...</span>
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+          <span className="ml-2 mt-3 text-muted-foreground">初始化存储服务...</span>
         </div>
       )}
     </div>
