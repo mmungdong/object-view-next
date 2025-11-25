@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import type { FileInfo } from '../types/storage';
-import { formatFileSize } from '../utils/formatters';
 import { isImageFile } from '../utils/fileUtils';
 
 interface FilePreviewProps {
@@ -81,19 +80,15 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
     document.body.removeChild(link);
   };
 
-  const handleOpenInNewTab = () => {
-    window.open(fileUrl, '_blank');
-  };
-
   return (
-    <div className="fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4 animate-fade-in">
-      <div className="modal-content modal-responsive bg-white w-full max-w-4xl max-h-[90vh] flex flex-col animate-scale-in">
-        {/* 头部 */}
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 overflow-hidden">
+      <div className="bg-white w-full max-w-4xl max-h-[90vh] flex flex-col rounded-lg shadow-xl overflow-hidden">
+        {/* 头部 - 简化设计 */}
         <div className="flex justify-between items-center border-b border-neutral-200 p-4">
           <h2 className="text-lg font-semibold text-neutral-800 truncate">{file.name}</h2>
           <button
             onClick={onClose}
-            className="text-neutral-500 hover:text-neutral-700"
+            className="text-neutral-500 hover:text-neutral-700 p-1 rounded-full hover:bg-neutral-100 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -101,22 +96,8 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
           </button>
         </div>
 
-        {/* 文件信息 */}
-        <div className="p-4 border-b border-neutral-200">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-            <div>
-              <span className="text-neutral-600">大小:</span>
-              <span className="ml-2 text-neutral-800">{formatFileSize(file.size)}</span>
-            </div>
-            <div>
-              <span className="text-neutral-600">类型:</span>
-              <span className="ml-2 text-neutral-800">{file.isFolder ? '文件夹' : file.name.split('.').pop()?.toUpperCase()}</span>
-            </div>
-          </div>
-        </div>
-
         {/* 内容区域 */}
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 flex items-center justify-center">
           {loading && (
             <div className="flex flex-col items-center justify-center h-64">
               <div className="loading-spinner"></div>
@@ -142,20 +123,20 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
 
           {!loading && !error && (
             <>
-              {/* 图片预览 */}
+              {/* 图片预览 - 简化设计，居中显示 */}
               {content === 'image' && (
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center p-4 w-full">
                   {imageLoading && (
                     <div className="flex flex-col items-center justify-center h-64">
                       <div className="loading-spinner"></div>
                       <span className="ml-3 text-neutral-600 mt-2">图片加载中...</span>
                     </div>
                   )}
-                  <div className="relative rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200 p-4 w-full flex justify-center">
+                  <div className="relative rounded-lg overflow-hidden bg-neutral-50 border border-neutral-200 w-full flex justify-center items-center">
                     <img
                       src={fileUrl}
                       alt={file.name}
-                      className={`max-w-full max-h-[70vh] object-contain transition-opacity duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+                      className={`max-w-full max-h-[60vh] object-contain transition-opacity duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
                       onLoad={() => setImageLoading(false)}
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -165,18 +146,15 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
                       }}
                     />
                   </div>
-                  <div className="mt-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                  <div className="mt-4 w-full flex justify-center">
                     <button
                       onClick={handleDownload}
-                      className="btn btn-secondary btn-mobile px-4 py-2"
+                      className="btn btn-secondary btn-mobile px-4 py-2 flex items-center justify-center"
                     >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
                       下载图片
-                    </button>
-                    <button
-                      onClick={handleOpenInNewTab}
-                      className="btn btn-neutral btn-mobile px-4 py-2"
-                    >
-                      在新标签页中打开
                     </button>
                   </div>
                 </div>
@@ -196,15 +174,12 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
                   <div className="mt-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                     <button
                       onClick={handleDownload}
-                      className="btn btn-secondary btn-mobile px-4 py-2"
+                      className="btn btn-secondary btn-mobile px-4 py-2 flex items-center justify-center"
                     >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
                       下载 PDF
-                    </button>
-                    <button
-                      onClick={handleOpenInNewTab}
-                      className="btn btn-neutral btn-mobile px-4 py-2"
-                    >
-                      在新标签页中打开
                     </button>
                   </div>
                 </div>
@@ -219,15 +194,12 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
                   <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                     <button
                       onClick={handleDownload}
-                      className="btn btn-secondary btn-mobile px-4 py-2"
+                      className="btn btn-secondary btn-mobile px-4 py-2 flex items-center justify-center"
                     >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
                       下载文件
-                    </button>
-                    <button
-                      onClick={handleOpenInNewTab}
-                      className="btn btn-neutral btn-mobile px-4 py-2"
-                    >
-                      在新标签页中打开
                     </button>
                   </div>
                 </div>
@@ -243,15 +215,12 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
                   <p className="mt-2 text-neutral-600">此文件类型不支持预览</p>
                   <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
                     <button
-                      onClick={handleOpenInNewTab}
-                      className="btn btn-primary btn-mobile px-4 py-2"
-                    >
-                      在新标签页中打开
-                    </button>
-                    <button
                       onClick={handleDownload}
-                      className="btn btn-secondary btn-mobile px-4 py-2"
+                      className="btn btn-secondary btn-mobile px-4 py-2 flex items-center justify-center"
                     >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
                       下载文件
                     </button>
                   </div>
@@ -268,32 +237,6 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
                   <p className="mt-2 text-neutral-600">这是一个文件夹，无法直接预览</p>
                 </div>
               )}
-            </>
-          )}
-        </div>
-
-        {/* 底部操作按钮 */}
-        <div className="border-t border-neutral-200 p-4 flex flex-col sm:flex-row justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="btn btn-neutral btn-mobile px-4 py-2"
-          >
-            关闭
-          </button>
-          {!file.isFolder && (
-            <>
-              <button
-                onClick={handleOpenInNewTab}
-                className="btn btn-primary btn-mobile px-4 py-2"
-              >
-                在新标签页中打开
-              </button>
-              <button
-                onClick={handleDownload}
-                className="btn btn-secondary btn-mobile px-4 py-2"
-              >
-                下载
-              </button>
             </>
           )}
         </div>

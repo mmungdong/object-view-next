@@ -4,6 +4,7 @@ import { formatFileSize } from '../utils/formatters';
 import { isImageFile } from '../utils/fileUtils';
 import FilePreview from './FilePreview';
 import { Folder, FileText, Image } from 'lucide-react';
+import { createPortal } from 'react-dom';
 
 interface FileItemProps {
   file: FileInfo;
@@ -151,12 +152,15 @@ export default function FileItem({ file, layout, onEnterFolder, getFileUrl }: Fi
           </div>
         </div>
 
-        {showPreview && fileUrl && (
-          <FilePreview
-            file={file}
-            fileUrl={fileUrl}
-            onClose={() => setShowPreview(false)}
-          />
+        {showPreview && fileUrl && typeof window !== 'undefined' && (
+          createPortal(
+            <FilePreview
+              file={file}
+              fileUrl={fileUrl}
+              onClose={() => setShowPreview(false)}
+            />,
+            document.body
+          )
         )}
       </>
     );
@@ -226,12 +230,15 @@ export default function FileItem({ file, layout, onEnterFolder, getFileUrl }: Fi
         </div>
       </div>
 
-      {showPreview && fileUrl && (
-        <FilePreview
-          file={file}
-          fileUrl={fileUrl}
-          onClose={() => setShowPreview(false)}
-        />
+      {showPreview && fileUrl && typeof window !== 'undefined' && (
+        createPortal(
+          <FilePreview
+            file={file}
+            fileUrl={fileUrl}
+            onClose={() => setShowPreview(false)}
+          />,
+          document.body
+        )
       )}
     </>
   );
