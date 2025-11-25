@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import '../components/ui/button'; // 确保导入按钮组件的样式
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// 使用 Inter 作为主要字体，它对中英文都有良好的支持
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// 使用 Geist Mono 作为等宽字体
+const geistMono = GeistMono;
 
 export const metadata: Metadata = {
   title: "阿里云 OSS 在线预览工具",
@@ -26,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-neutral-50 text-neutral-800`}
+        className={`${inter.variable} ${geistMono.variable} antialiased min-h-screen bg-neutral-50 text-neutral-800 font-sans`}
       >
         <div className="flex flex-col min-h-screen">
           {children}
