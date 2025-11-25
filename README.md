@@ -2,7 +2,7 @@
 
 这是一个基于 Next.js App Router 的阿里云 OSS 在线预览工具。
 
-## 项目结构
+## 项目结构 
 
 ```
 object-view-next/
