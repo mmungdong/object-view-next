@@ -1,6 +1,9 @@
 import { NextRequest } from 'next/server';
 import OSS from 'ali-oss';
 
+// 配置此路由为动态路由，不进行静态导出
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

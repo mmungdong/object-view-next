@@ -1,6 +1,9 @@
 import { NextRequest } from 'next/server';
 import OSS from 'ali-oss';
 
+// 配置此路由为动态路由，不进行静态导出
+export const dynamic = 'force-dynamic';
+
 // 由于 Next.js App Router 在服务器组件中不能直接访问环境变量，
 // 我们需要通过请求参数传递配置信息
 
