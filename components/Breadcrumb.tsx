@@ -9,13 +9,13 @@ interface BreadcrumbProps {
 
 export default function Breadcrumb({ items, onNavigate, onGoBack, canGoBack }: BreadcrumbProps) {
   return (
-    <nav className="flex items-center space-x-2">
+    <nav className="breadcrumb flex items-center space-x-2 animate-slide-in-up">
       <button
         onClick={onGoBack}
         disabled={!canGoBack}
-        className={`flex items-center px-3 py-1 rounded ${
+        className={`flex items-center px-3 py-1 rounded transition-all duration-200 ${
           canGoBack
-            ? 'text-blue-600 hover:bg-blue-50'
+            ? 'text-blue-600 hover:bg-blue-50 hover-lift'
             : 'text-gray-400 cursor-not-allowed'
         }`}
       >
@@ -29,7 +29,7 @@ export default function Breadcrumb({ items, onNavigate, onGoBack, canGoBack }: B
 
       <div className="flex items-center space-x-2">
         {items.map((item, index) => (
-          <div key={item.path} className="flex items-center">
+          <div key={item.path} className="flex items-center animate-fade-in">
             {index > 0 && (
               <svg className="w-4 h-4 mx-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -37,10 +37,10 @@ export default function Breadcrumb({ items, onNavigate, onGoBack, canGoBack }: B
             )}
             <button
               onClick={() => onNavigate(item.path)}
-              className={`px-2 py-1 rounded ${
+              className={`px-2 py-1 rounded transition-all duration-200 ${
                 index === items.length - 1
                   ? 'text-gray-900 font-medium'
-                  : 'text-blue-600 hover:bg-blue-50'
+                  : 'text-blue-600 hover:bg-blue-50 hover-lift'
               }`}
             >
               {item.name}

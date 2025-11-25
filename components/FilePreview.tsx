@@ -86,8 +86,8 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
   };
 
   return (
-    <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="modal-content modal-responsive bg-white w-full max-w-4xl max-h-[90vh] flex flex-col animate-scale-in">
         {/* 头部 */}
         <div className="flex justify-between items-center border-b border-neutral-200 p-4">
           <h2 className="text-lg font-semibold text-neutral-800 truncate">{file.name}</h2>
@@ -118,22 +118,22 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
         {/* 内容区域 */}
         <div className="flex-1 overflow-auto p-4">
           {loading && (
-            <div className="flex justify-center items-center h-64">
+            <div className="flex flex-col items-center justify-center h-64">
               <div className="loading-spinner"></div>
-              <span className="ml-3 text-neutral-600">加载中...</span>
+              <span className="ml-3 text-neutral-600 mt-2">加载中...</span>
             </div>
           )}
 
           {error && (
-            <div className="text-center py-12">
-              <svg className="mx-auto h-16 w-16 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="notification notification-error text-center py-8">
+              <svg className="mx-auto h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               <h3 className="mt-4 text-lg font-medium text-neutral-800">加载失败</h3>
               <p className="mt-2 text-neutral-600">{error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="mt-4 btn-primary px-4 py-2"
+                className="mt-4 btn btn-danger px-4 py-2"
               >
                 重试
               </button>
@@ -144,18 +144,18 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
             <>
               {/* 图片预览 */}
               {content === 'image' && (
-                <div className="flex justify-center">
+                <div className="flex flex-col items-center">
                   {imageLoading && (
-                    <div className="flex items-center justify-center h-64">
+                    <div className="flex flex-col items-center justify-center h-64">
                       <div className="loading-spinner"></div>
-                      <span className="ml-3 text-neutral-600">图片加载中...</span>
+                      <span className="ml-3 text-neutral-600 mt-2">图片加载中...</span>
                     </div>
                   )}
-                  <div className="relative">
+                  <div className="relative rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200 p-4 w-full flex justify-center">
                     <img
                       src={fileUrl}
                       alt={file.name}
-                      className={`max-w-full max-h-[70vh] object-contain ${imageLoading ? 'hidden' : ''}`}
+                      className={`max-w-full max-h-[70vh] object-contain transition-opacity duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
                       onLoad={() => setImageLoading(false)}
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -165,25 +165,71 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
                       }}
                     />
                   </div>
+                  <div className="mt-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                    <button
+                      onClick={handleDownload}
+                      className="btn btn-secondary btn-mobile px-4 py-2"
+                    >
+                      下载图片
+                    </button>
+                    <button
+                      onClick={handleOpenInNewTab}
+                      className="btn btn-neutral btn-mobile px-4 py-2"
+                    >
+                      在新标签页中打开
+                    </button>
+                  </div>
                 </div>
               )}
 
               {/* PDF 预览 */}
               {content === 'pdf' && (
-                <div className="text-center">
-                  <p className="mb-4 text-neutral-600">PDF 文件预览</p>
-                  <iframe
-                    src={fileUrl}
-                    className="w-full h-[70vh]"
-                    title={`PDF Preview: ${file.name}`}
-                  />
+                <div className="flex flex-col items-center">
+                  <div className="mb-4 text-neutral-600">PDF 文件预览</div>
+                  <div className="w-full border border-neutral-200 rounded-lg overflow-hidden">
+                    <iframe
+                      src={fileUrl}
+                      className="w-full h-[70vh]"
+                      title={`PDF Preview: ${file.name}`}
+                    />
+                  </div>
+                  <div className="mt-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                    <button
+                      onClick={handleDownload}
+                      className="btn btn-secondary btn-mobile px-4 py-2"
+                    >
+                      下载 PDF
+                    </button>
+                    <button
+                      onClick={handleOpenInNewTab}
+                      className="btn btn-neutral btn-mobile px-4 py-2"
+                    >
+                      在新标签页中打开
+                    </button>
+                  </div>
                 </div>
               )}
 
               {/* 文本内容预览 */}
               {content && content !== 'image' && content !== 'pdf' && (
-                <div className="border border-neutral-200 rounded p-4 bg-neutral-50">
-                  <pre className="whitespace-pre-wrap break-words text-neutral-800">{content}</pre>
+                <div className="flex flex-col">
+                  <div className="border border-neutral-200 rounded p-4 bg-neutral-50 mb-4">
+                    <pre className="whitespace-pre-wrap break-words text-neutral-800">{content}</pre>
+                  </div>
+                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                    <button
+                      onClick={handleDownload}
+                      className="btn btn-secondary btn-mobile px-4 py-2"
+                    >
+                      下载文件
+                    </button>
+                    <button
+                      onClick={handleOpenInNewTab}
+                      className="btn btn-neutral btn-mobile px-4 py-2"
+                    >
+                      在新标签页中打开
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -195,16 +241,16 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
                   </svg>
                   <h3 className="mt-4 text-lg font-medium text-neutral-800">文件预览不可用</h3>
                   <p className="mt-2 text-neutral-600">此文件类型不支持预览</p>
-                  <div className="mt-6 flex justify-center gap-3">
+                  <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
                     <button
                       onClick={handleOpenInNewTab}
-                      className="btn-primary px-4 py-2"
+                      className="btn btn-primary btn-mobile px-4 py-2"
                     >
                       在新标签页中打开
                     </button>
                     <button
                       onClick={handleDownload}
-                      className="btn-secondary px-4 py-2"
+                      className="btn btn-secondary btn-mobile px-4 py-2"
                     >
                       下载文件
                     </button>
@@ -227,10 +273,10 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
         </div>
 
         {/* 底部操作按钮 */}
-        <div className="border-t border-neutral-200 p-4 flex justify-end gap-3">
+        <div className="border-t border-neutral-200 p-4 flex flex-col sm:flex-row justify-end gap-3">
           <button
             onClick={onClose}
-            className="btn-neutral px-4 py-2"
+            className="btn btn-neutral btn-mobile px-4 py-2"
           >
             关闭
           </button>
@@ -238,13 +284,13 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
             <>
               <button
                 onClick={handleOpenInNewTab}
-                className="btn-primary px-4 py-2"
+                className="btn btn-primary btn-mobile px-4 py-2"
               >
                 在新标签页中打开
               </button>
               <button
                 onClick={handleDownload}
-                className="btn-secondary px-4 py-2"
+                className="btn btn-secondary btn-mobile px-4 py-2"
               >
                 下载
               </button>

@@ -169,7 +169,7 @@ export default function FileItem({ file, layout, onEnterFolder, getFileUrl }: Fi
         onKeyDown={handleKeyDown}
         role="button"
         tabIndex={0}
-        className="flex flex-col rounded-lg border cursor-pointer transition-all duration-200 hover:shadow-md overflow-hidden border-neutral-200 hover:border-primary/30 bg-white"
+        className="file-item flex flex-col cursor-pointer overflow-hidden border border-neutral-200 bg-white hover-lift animate-fade-in"
       >
         <div className="flex items-center justify-center h-28 p-2 bg-neutral-50">
           {file.isFolder ? (

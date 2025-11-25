@@ -35,17 +35,17 @@ export async function GET(request: NextRequest) {
       prefix,
       delimiter: '/',
       'max-keys': 1000
-    });
+    }, {});
 
     // 创建一个超时 Promise
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => reject(new Error('OSS 请求超时')), 30000); // 30秒超时
     });
 
-    const result = await Promise.race([listPromise, timeoutPromise]);
+    const result = await Promise.race([listPromise, timeoutPromise]) as OSS.ListObjectResult;
 
     // 处理文件和文件夹
-    const files = [];
+    const files: any[] = [];
 
     // 处理文件夹
     if (result.prefixes) {

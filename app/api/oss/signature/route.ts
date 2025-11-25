@@ -32,17 +32,18 @@ export async function POST(request: NextRequest) {
 
     // 生成签名 URL
     // 添加超时机制防止请求长时间挂起
-    const signaturePromise = client.signatureUrl(key, { expires });
+    const signedUrl = client.signatureUrl(key, { expires });
+    const signaturePromise = Promise.resolve(signedUrl);
 
     // 创建一个超时 Promise
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => reject(new Error('OSS 签名请求超时')), 30000); // 30秒超时
     });
 
-    const url = await Promise.race([signaturePromise, timeoutPromise]);
+    const resultUrl = await Promise.race([signaturePromise, timeoutPromise]);
 
     return new Response(
-      JSON.stringify({ url }),
+      JSON.stringify({ url: resultUrl }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (error: any) {

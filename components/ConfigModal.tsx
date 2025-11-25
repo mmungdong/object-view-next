@@ -172,8 +172,8 @@ export default function ConfigModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="modal-content modal-responsive bg-white w-full max-w-4xl max-h-[90vh] flex flex-col animate-scale-in">
         {/* 头部 */}
         <div className="flex justify-between items-center border-b border-neutral-200 p-4">
           <h2 className="text-xl font-bold text-neutral-800">存储配置管理</h2>
@@ -194,7 +194,7 @@ export default function ConfigModal({
               <h3 className="text-lg font-semibold">配置列表</h3>
               <button
                 onClick={handleAddNew}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+                className="btn btn-primary btn-mobile px-4 py-2"
               >
                 添加配置
               </button>
@@ -206,7 +206,7 @@ export default function ConfigModal({
                 <select
                   value={currentConfigId}
                   onChange={(e) => setCurrentConfigId(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="select-field w-full"
                 >
                   {configs.map(config => (
                     <option key={config.id} value={config.id}>
@@ -230,7 +230,7 @@ export default function ConfigModal({
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field w-full"
                       placeholder="例如：我的阿里云存储"
                     />
                   </div>
@@ -240,7 +240,7 @@ export default function ConfigModal({
                     <select
                       value={formData.type}
                       onChange={(e) => setFormData({...formData, type: e.target.value as 'oss'})}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="select-field w-full"
                       disabled // 只支持OSS类型，所以禁用选择
                     >
                       <option value="oss">阿里云 OSS</option>
@@ -252,7 +252,7 @@ export default function ConfigModal({
                     <select
                       value={formData.accessType}
                       onChange={(e) => setFormData({...formData, accessType: e.target.value as 'private' | 'public'})}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="select-field w-full"
                     >
                       <option value="private">私有（需要 AK/SK）</option>
                       <option value="public">公有读</option>
@@ -265,7 +265,7 @@ export default function ConfigModal({
                       type="text"
                       value={formData.bucket}
                       onChange={(e) => setFormData({...formData, bucket: e.target.value})}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field w-full"
                       placeholder="例如：my-bucket-name"
                     />
                   </div>
@@ -276,7 +276,7 @@ export default function ConfigModal({
                       type="text"
                       value={formData.region}
                       onChange={(e) => setFormData({...formData, region: e.target.value})}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field w-full"
                       placeholder="例如：oss-cn-hangzhou"
                     />
                   </div>
@@ -289,7 +289,7 @@ export default function ConfigModal({
                           type="password"
                           value={formData.accessKey}
                           onChange={(e) => setFormData({...formData, accessKey: e.target.value})}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="input-field w-full"
                           placeholder="请输入 AccessKey"
                         />
                       </div>
@@ -300,7 +300,7 @@ export default function ConfigModal({
                           type="password"
                           value={formData.secretKey}
                           onChange={(e) => setFormData({...formData, secretKey: e.target.value})}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="input-field w-full"
                           placeholder="请输入 SecretKey"
                         />
                       </div>
@@ -311,13 +311,13 @@ export default function ConfigModal({
                 <div className="flex space-x-2">
                   <button
                     onClick={handleSaveConfig}
-                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors"
+                    className="btn btn-secondary btn-mobile px-4 py-2"
                   >
                     保存配置
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
-                    className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+                    className="btn btn-neutral btn-mobile px-4 py-2"
                   >
                     取消
                   </button>
@@ -326,8 +326,8 @@ export default function ConfigModal({
             )}
 
             {configs.length > 0 && (
-              <div className="border border-gray-200 rounded-lg overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
+              <div className="responsive-table-container overflow-hidden">
+                <table className="responsive-table data-table min-w-full">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">名称</th>
@@ -364,13 +364,13 @@ export default function ConfigModal({
                         <td className="px-4 py-2 whitespace-nowrap text-sm font-medium">
                           <button
                             onClick={() => handleEditConfig(config)}
-                            className="text-blue-600 hover:text-blue-900 mr-3"
+                            className="btn btn-neutral btn-mobile px-3 py-1 text-sm mr-2"
                           >
                             编辑
                           </button>
                           <button
                             onClick={() => handleDeleteConfig(config.id)}
-                            className="text-red-600 hover:text-red-900"
+                            className="btn btn-danger btn-mobile px-3 py-1 text-sm"
                           >
                             删除
                           </button>
@@ -394,7 +394,7 @@ export default function ConfigModal({
         <div className="border-t border-neutral-200 p-4 flex justify-end">
           <button
             onClick={onClose}
-            className="bg-neutral-500 hover:bg-neutral-600 text-white px-4 py-2 rounded-lg transition-colors"
+            className="btn btn-neutral btn-mobile px-4 py-2"
           >
             关闭
           </button>

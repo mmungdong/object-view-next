@@ -226,16 +226,18 @@ const loadFiles = useCallback(async (prefix: string) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <Breadcrumb
-          items={breadcrumbs}
-          onNavigate={navigateToPath}
-          onGoBack={goBack}
-          canGoBack={breadcrumbs.length > 1}
-        />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="w-full sm:w-auto">
+          <Breadcrumb
+            items={breadcrumbs}
+            onNavigate={navigateToPath}
+            onGoBack={goBack}
+            canGoBack={breadcrumbs.length > 1}
+          />
+        </div>
         <button
           onClick={toggleLayout}
-          className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1.5 rounded-lg transition-colors text-sm font-medium"
+          className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1.5 rounded-lg transition-colors text-sm font-medium w-full sm:w-auto justify-center"
         >
           {layout === 'grid' ? (
             <>
@@ -259,7 +261,7 @@ const loadFiles = useCallback(async (prefix: string) => {
       )}
 
       {error && (
-        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-4">
+        <div className="notification notification-error px-4 py-3 rounded-lg mb-4">
           <div className="flex items-start">
             <AlertCircle className="w-5 h-5 mt-0.5 mr-2 flex-shrink-0" />
             <div className="flex-1">
@@ -267,7 +269,7 @@ const loadFiles = useCallback(async (prefix: string) => {
               <p className="text-sm mt-1">{error}</p>
               <button
                 onClick={debouncedReload}
-                className="mt-3 bg-destructive hover:bg-destructive/90 text-destructive-foreground px-3 py-1.5 rounded text-sm transition-colors"
+                className="mt-3 btn btn-danger px-3 py-1.5 rounded text-sm"
               >
                 重新加载
               </button>
