@@ -1,124 +1,79 @@
 # Object View Next
 
-A modern React application for browsing and previewing files in Alibaba Cloud OSS buckets.
+这是一个基于 Next.js App Router 的阿里云 OSS 在线预览工具。
 
-## Features
+## 项目结构
 
-- Browse files and folders in OSS buckets
-- Preview images directly in the browser
-- Support for both private and public read buckets
-- Responsive design with grid and list view options
-- Built with modern web technologies
+```
+object-view-next/
+├── app/                      # 核心路由目录（App Router 核心）
+│   ├── layout.tsx            # 根布局（全局共享：导航栏、页脚、全局样式）
+│   ├── page.tsx              # 首页（对应 / 路由）
+│   ├── error.tsx             # 全局错误边界（捕获整个应用的错误）
+│   ├── loading.tsx           # 全局加载状态（首页或全局通用加载）
+│   ├── not-found.tsx         # 404 页面（全局未找到路由时触发）
+│   └── globals.css           # 全局样式（必须在根布局导入）
+├── components/               # 通用组件库
+│   ├── ui/                   # 基础 UI 组件（ShadCN UI 组件）
+│   └── *.tsx                 # 业务组件
+├── lib/                      # 工具库
+│   └── utils.ts              # 工具函数
+├── services/                 # 服务层
+│   └── storageService.ts     # 存储服务实现
+├── types/                    # TypeScript 类型定义
+│   └── storage.ts            # 存储相关类型定义
+├── utils/                    # 工具函数
+│   ├── formatters.ts         # 格式化工具函数
+│   └── fileUtils.ts          # 文件工具函数
+├── public/                   # 静态资源
+└── next.config.ts            # Next.js 配置文件
+```
 
-## Tech Stack
+## 功能特性
 
-- **Frontend**: React 19, TypeScript, Vite
-- **Styling**: Tailwind CSS v4, ShadCN UI
-- **Cloud Storage**: Alibaba Cloud OSS
-- **Build Tool**: Vite
-- **Code Quality**: ESLint
+1. **存储桶配置管理**：支持配置阿里云 OSS 存储桶的 AccessKey、SecretKey、Bucket 名称和区域
+2. **文件浏览**：支持浏览存储桶中的文件和文件夹
+3. **文件预览**：支持图片、文本文件和 PDF 文件的在线预览
+4. **多布局展示**：支持网格和列表两种布局方式
+5. **响应式设计**：适配不同屏幕尺寸的设备
 
-## Getting Started
+## 技术栈
 
-### Prerequisites
+- Next.js 15 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS v4
+- ShadCN UI
+- 阿里云 OSS SDK
 
-- Node.js (version 16 or higher)
-- npm or yarn
+## 安装和运行
 
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd object-view-next
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Development
-
-Start the development server:
 ```bash
+# 安装依赖
+npm install
+
+# 开发模式运行
 npm run dev
-```
 
-Build for production:
-```bash
+# 构建生产版本
 npm run build
+
+# 启动生产服务器
+npm run start
 ```
 
-Preview the production build:
-```bash
-npm run preview
-```
+## 使用说明
 
-Lint the code:
-```bash
-npm run lint
-```
+1. 首次使用需要配置存储桶信息：
+   - 存储类型：目前仅支持阿里云 OSS
+   - 访问类型：私有（需要 AK/SK）或公有读
+   - 存储桶名称和区域
+   - 如果是私有存储桶，需要填写 AccessKey 和 SecretKey
 
-## Using ShadCN UI Components
+2. 配置完成后即可浏览和预览存储桶中的文件
 
-This project integrates ShadCN UI components for a consistent and accessible user interface. To use ShadCN UI components:
+## 注意事项
 
-1. Import the component:
-   ```typescript
-   import { Button } from "@/components/ui/button";
-   ```
-
-2. Use the component in your JSX:
-   ```tsx
-   <Button variant="default">Click me</Button>
-   ```
-
-## Project Structure
-
-```
-src/
-├── components/
-│   ├── ui/              # ShadCN UI components
-│   ├── ConfigManager.tsx # Storage configuration management
-│   ├── FileBrowser.tsx  # Main file browser interface
-│   ├── FileList.tsx     # File listing component
-│   ├── FileItem.tsx     # Individual file item component
-│   └── Breadcrumb.tsx   # Navigation breadcrumb
-├── lib/                 # Utility functions
-├── services/            # OSS service implementation
-├── types/               # TypeScript types
-├── utils/               # Helper functions
-├── App.tsx             # Main application component
-├── index.css           # Global styles
-└── main.tsx            # Application entry point
-```
-
-## Configuration
-
-The application supports two types of OSS buckets:
-
-1. **Private Buckets**: Require AccessKey and SecretKey for authentication
-2. **Public Read Buckets**: Can be accessed without authentication credentials
-
-Configuration is persisted in localStorage for convenience.
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a pull request
-
-## License
-
-This project is licensed under the MIT License.
-
-## Acknowledgements
-
-- [React](https://reactjs.org/)
-- [Vite](https://vitejs.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [ShadCN UI](https://ui.shadcn.com/)
-- [Alibaba Cloud OSS](https://www.alibabacloud.com/product/oss)
+1. 对于私有存储桶，需要确保 AccessKey 和 SecretKey 有相应的权限
+2. 对于公有读存储桶，需要在阿里云 OSS 控制台配置相应的 CORS 规则
+3. 图片预览支持常见的图片格式：JPG/PNG/GIF/WebP 等

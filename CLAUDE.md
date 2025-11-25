@@ -1,11 +1,10 @@
 # Object View Next Project
 
-This project is a modern React application built with Vite, TypeScript, Tailwind CSS, and ESLint. It includes an Alibaba Cloud OSS Object Storage Online Preview Tool.
+This project is a modern React application built with Next.js App Router, TypeScript, Tailwind CSS, and ESLint. It includes an Alibaba Cloud OSS Object Storage Online Preview Tool.
 
 ## Tech Stack
 
-- **Build Tool**: Vite
-- **Framework**: React 19
+- **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4
 - **UI Components**: ShadCN UI
@@ -14,38 +13,91 @@ This project is a modern React application built with Vite, TypeScript, Tailwind
 ## Project Structure
 
 ```
-project-root/
-├── src/
-│   ├── components/
-│   │   ├── ui/
-│   │   │   └── button.tsx
-│   │   ├── ConfigManager.tsx
-│   │   ├── FileBrowser.tsx
-│   │   ├── FileList.tsx
-│   │   ├── FileItem.tsx
-│   │   └── Breadcrumb.tsx
-│   ├── lib/
-│   │   └── utils.ts
-│   ├── hooks/
-│   ├── services/
-│   │   └── storageService.ts
-│   ├── types/
-│   │   └── storage.ts
-│   ├── utils/
-│   │   └── formatters.ts
-│   ├── App.tsx
-│   ├── index.css
-│   └── main.tsx
-├── public/
-│   └── vite.svg
-├── index.html
+object-view-next/
+├── app/                      # 核心路由目录（App Router 核心）
+│   ├── layout.tsx            # 根布局（全局共享：导航栏、页脚、全局样式）
+│   ├── page.tsx              # 首页（对应 / 路由）
+│   ├── error.tsx             # 全局错误边界（捕获整个应用的错误）
+│   ├── loading.tsx           # 全局加载状态（首页或全局通用加载）
+│   ├── not-found.tsx         # 404 页面（全局未找到路由时触发）
+│   ├── globals.css           # 全局样式（必须在根布局导入）
+│   ├── (auth)/               # 路由分组： auth 相关路由（URL 不包含 (auth)）
+│   │   ├── login/
+│   │   │   ├── page.tsx      # 登录页（/login）
+│   │   │   └── loading.tsx   # 登录页单独加载状态
+│   │   └── register/
+│   │       └── page.tsx      # 注册页（/register）
+│   ├── (dashboard)/          # 路由分组： 后台管理相关路由
+│   │   ├── layout.tsx        # 后台专属布局（侧边栏、顶部导航）
+│   │   ├── page.tsx          # 后台首页（/dashboard）
+│   │   ├── settings/
+│   │   │   └── page.tsx      # 后台设置页（/dashboard/settings）
+│   │   └── [userId]/         # 动态路由：用户详情（/dashboard/123）
+│   │       └── page.tsx      # 动态路由页面
+│   ├── api/                 # API 路由（服务端接口）
+│   │   ├── users/
+│   │   │   ├── route.ts      # GET/POST /api/users
+│   │   │   └── [id]/
+│   │   │       └── route.ts  # GET/PUT/DELETE /api/users/123
+│   │   └── auth/
+│   │       └── route.ts      # 登录/注册接口
+│   └── blog/                 # 普通路由：博客模块
+│       ├── page.tsx          # 博客列表页（/blog）
+│       ├── [slug]/           # 动态路由：单篇博客（/blog/hello-world）
+│       │   ├── page.tsx      # 博客详情页
+│       │   └── edit/
+│       │       └── page.tsx  # 编辑博客（/blog/hello-world/edit）
+├── components/               # 通用组件库（按功能分类）
+│   ├── ui/                   # 基础 UI 组件（原子组件，可复用）
+│   │   ├── Button.tsx
+│   │   ├── Input.tsx
+│   │   ├── Card.tsx
+│   │   └── Navbar.tsx
+│   ├── layout/               # 布局组件（非路由布局，如页脚、侧边栏）
+│   │   ├── Footer.tsx
+│   │   └── Sidebar.tsx
+│   ├── auth/                 # 业务组件：auth 相关
+│   │   ├── LoginForm.tsx
+│   │   └── RegisterForm.tsx
+│   └── blog/                 # 业务组件：博客相关
+│       ├── BlogCard.tsx
+│       └── BlogEditor.tsx
+├── lib/                      # 工具库/配置/服务（通用逻辑）
+│   ├── utils/                # 工具函数（格式化、验证等）
+│   │   ├── formatDate.ts
+│   │   └── validateForm.ts
+│   ├── api/                  # API 客户端（前端请求封装）
+│   │   ├── client.ts         # Axios/ fetch 实例配置
+│   │   └── users.ts          # 用户相关请求函数
+│   ├── db/                   # 数据库相关（如 Prisma 配置）
+│   │   └── prisma.ts         # Prisma Client 实例
+│   └── config/               # 全局配置（环境变量、常量等）
+│       └── index.ts
+├── hooks/                    # 自定义 React Hooks（复用状态逻辑）
+│   ├── useAuth.ts            # 登录状态 Hook
+│   ├── useForm.ts            # 表单处理 Hook
+│   └── useFetch.ts           # 数据请求 Hook
+├── types/                    # TypeScript 类型定义（全局共享接口）
+│   ├── user.ts               # 用户相关类型
+│   ├── blog.ts               # 博客相关类型
+│   └── common.ts             # 通用类型（如响应格式）
+├── public/                   # 静态资源（无需导入，直接通过 / 访问）
+│   ├── favicon.ico
+│   ├── images/               # 图片资源
+│   │   └── logo.png
+│   └── fonts/                # 字体资源
+├── prisma/                   # （可选）ORM 配置（Prisma）
+│   ├── schema.prisma         # 数据库模型定义
+│   └── migrations/           # 数据库迁移文件
+├── store/                    # （可选）状态管理（如 Zustand/Redux）
+│   └── authStore.ts          # 登录状态全局管理
+├── middleware.ts             # （可选）Next.js 中间件（路由守卫、重定向）
+├── next.config.js            # Next.js 配置（如端口、插件、环境变量）
+├── tailwind.config.js        # （可选）Tailwind CSS 配置
+├── postcss.config.js         # （可选）PostCSS 配置（配合 Tailwind）
+├── tsconfig.json             # TypeScript 配置
 ├── package.json
-├── tsconfig.json
-├── vite.config.ts
-├── tailwind.config.js
-├── postcss.config.js
-└── eslint.config.js
-```
+└── README.md
 
 ## Alibaba Cloud OSS Online Preview Tool
 
@@ -105,7 +157,7 @@ The service implements the `StorageService` interface with:
 
 ### Prerequisites
 
-- Node.js (version 16 or higher)
+- Node.js (version 18 or higher)
 - npm or yarn
 
 ### Installation
@@ -128,9 +180,9 @@ Build the project:
 npm run build
 ```
 
-Preview the build:
+Start the production server:
 ```bash
-npm run preview
+npm run start
 ```
 
 Lint the code:
@@ -151,23 +203,23 @@ npm run lint
 
 - `eslint.config.js`: ESLint configuration with TypeScript and React support
 
-### Vite
+### Next.js
 
-- `vite.config.ts`: Vite build tool configuration
+- `next.config.ts`: Next.js build tool configuration
 
 ### ShadCN UI
 
 ShadCN UI has been integrated into the project with the following structure:
-- `src/components/ui/`: Directory for ShadCN UI components
-- `src/lib/utils.ts`: Utility functions for styling with `cn` helper
-- CSS variables in `src/index.css` for consistent theming
+- `components/ui/`: Directory for ShadCN UI components
+- `lib/utils.ts`: Utility functions for styling with `cn` helper
+- CSS variables in `app/globals.css` for consistent theming
 
 ## Scripts
 
 - `dev`: Start development server
 - `build`: Build for production
+- `start`: Start production server
 - `lint`: Run ESLint
-- `preview`: Preview production build locally
 
 ## Key Features
 
@@ -175,8 +227,7 @@ ShadCN UI has been integrated into the project with the following structure:
 - Tailwind CSS v4 for styling
 - ShadCN UI for accessible and customizable components
 - ESLint for code quality
-- Vite for fast development and building
-- React 19 for UI components
+- Next.js 15 App Router for modern React development
 - Real API integration with Alibaba Cloud OSS
 
 ## Author
