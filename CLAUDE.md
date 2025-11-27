@@ -21,32 +21,6 @@ object-view-next/
 │   ├── loading.tsx           # 全局加载状态（首页或全局通用加载）
 │   ├── not-found.tsx         # 404 页面（全局未找到路由时触发）
 │   ├── globals.css           # 全局样式（必须在根布局导入）
-│   ├── (auth)/               # 路由分组： auth 相关路由（URL 不包含 (auth)）
-│   │   ├── login/
-│   │   │   ├── page.tsx      # 登录页（/login）
-│   │   │   └── loading.tsx   # 登录页单独加载状态
-│   │   └── register/
-│   │       └── page.tsx      # 注册页（/register）
-│   ├── (dashboard)/          # 路由分组： 后台管理相关路由
-│   │   ├── layout.tsx        # 后台专属布局（侧边栏、顶部导航）
-│   │   ├── page.tsx          # 后台首页（/dashboard）
-│   │   ├── settings/
-│   │   │   └── page.tsx      # 后台设置页（/dashboard/settings）
-│   │   └── [userId]/         # 动态路由：用户详情（/dashboard/123）
-│   │       └── page.tsx      # 动态路由页面
-│   ├── api/                 # API 路由（服务端接口）
-│   │   ├── users/
-│   │   │   ├── route.ts      # GET/POST /api/users
-│   │   │   └── [id]/
-│   │   │       └── route.ts  # GET/PUT/DELETE /api/users/123
-│   │   └── auth/
-│   │       └── route.ts      # 登录/注册接口
-│   └── blog/                 # 普通路由：博客模块
-│       ├── page.tsx          # 博客列表页（/blog）
-│       ├── [slug]/           # 动态路由：单篇博客（/blog/hello-world）
-│       │   ├── page.tsx      # 博客详情页
-│       │   └── edit/
-│       │       └── page.tsx  # 编辑博客（/blog/hello-world/edit）
 ├── components/               # 通用组件库（按功能分类）
 │   ├── ui/                   # 基础 UI 组件（原子组件，可复用）
 │   │   ├── Button.tsx
@@ -56,12 +30,9 @@ object-view-next/
 │   ├── layout/               # 布局组件（非路由布局，如页脚、侧边栏）
 │   │   ├── Footer.tsx
 │   │   └── Sidebar.tsx
-│   ├── auth/                 # 业务组件：auth 相关
-│   │   ├── LoginForm.tsx
-│   │   └── RegisterForm.tsx
-│   └── blog/                 # 业务组件：博客相关
-│       ├── BlogCard.tsx
-│       └── BlogEditor.tsx
+│   └── auth/                 # 业务组件：auth 相关
+│       ├── LoginForm.tsx
+│       └── RegisterForm.tsx
 ├── lib/                      # 工具库/配置/服务（通用逻辑）
 │   ├── utils/                # 工具函数（格式化、验证等）
 │   │   ├── formatDate.ts
@@ -223,17 +194,23 @@ ShadCN UI has been integrated into the project with the following structure:
 
 ## Cloudflare Pages Deployment
 
-This project has been configured for deployment to Cloudflare Pages as a static site. The key changes made for this deployment are:
+This project is configured exclusively for deployment to Cloudflare Pages as a static site. All Cloudflare Workers configurations have been removed to avoid redundancy and ensure a clean deployment process.
 
-### Key Changes for Cloudflare Pages
+### Key Configuration for Cloudflare Pages
 
-1. **Removed Server-side API Routes**: All API routes in `/app/api` have been removed since Cloudflare Pages only serves static files.
+1. **Static Export**: The project uses `output: 'export'` in `next.config.ts` to generate static HTML files
+2. **Client-side Only**: All functionality runs in the browser with no server-side dependencies
+3. **Entrypoint**: Main entry file is `out/index.html` which is automatically recognized by Cloudflare Pages
+4. **Size Optimized**: Static build is approximately 2.9MB, well within Cloudflare Pages limits
+5. **No Server Functions**: Removed all API routes and server-side logic since Cloudflare Pages only serves static files
 
-2. **Client-side OSS Integration**: Modified `services/storageService.ts` to use the `ali-oss` SDK directly in the browser instead of making API calls to server-side routes.
+### Removed Cloudflare Workers Configurations
 
-3. **Static Export Configuration**: Updated `next.config.ts` with `output: 'export'` to generate static HTML files.
-
-4. **Entrypoint**: The main entrypoint is `out/index.html` which is automatically recognized by Cloudflare Pages.
+To ensure a clean deployment process and avoid confusion, the following Cloudflare Workers configurations have been removed:
+- Removed `@opennextjs/cloudflare` dependency
+- Removed `wrangler` dependency
+- Removed `open-next.config.js` configuration file
+- Removed Cloudflare Workers specific npm scripts (`preview`, `deploy`, `cf-typegen`)
 
 ### Deployment Instructions
 
@@ -254,6 +231,7 @@ This project has been configured for deployment to Cloudflare Pages as a static 
 - The static site size is approximately 2.9MB, well within Cloudflare Pages limits
 - OSS credentials are now handled client-side, so ensure proper access permissions
 - For private buckets, consider using temporary access keys with limited permissions
+- This project no longer supports Cloudflare Workers deployment to avoid redundancy
 
 ## Key Features
 
