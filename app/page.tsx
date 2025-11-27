@@ -5,14 +5,55 @@ import ConfigModal from '../components/ConfigModal';
 import FileBrowser from '../components/FileBrowser';
 import { Button } from '../components/ui/button';
 import type { StorageConfig } from '../types/storage';
-import { renewConfigCookie } from '../utils/cookieUtils';
+import { renewConfigCookie, getConfigCookie, setConfigCookie } from '../utils/cookieUtils';
 
 export default function Home() {
   const [currentConfig, setCurrentConfig] = useState<StorageConfig | null>(null);
   const [showConfigModal, setShowConfigModal] = useState(false);
 
-  // 在页面加载时续期cookie
+  // 在页面加载时处理 share_code 参数并续期cookie
   useEffect(() => {
+    // 处理 URL 中的 share_code 参数
+    const handleShareCode = () => {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const shareCode = urlParams.get('share_code');
+
+        if (shareCode) {
+          // 解析 share_code 参数
+          const decodedShareCode = decodeURIComponent(shareCode);
+          const sharedConfigs: StorageConfig[] = JSON.parse(decodedShareCode);
+
+          if (Array.isArray(sharedConfigs) && sharedConfigs.length > 0) {
+            // 获取现有的配置
+            const existingConfigs = getConfigCookie() || [];
+
+            // 合并现有配置和共享配置，避免重复
+            const existingConfigIds = new Set(existingConfigs.map(config => config.id));
+            const newConfigs = sharedConfigs.filter(config => !existingConfigIds.has(config.id));
+
+            // 合并配置
+            const mergedConfigs = [...existingConfigs, ...newConfigs];
+
+            // 保存到 cookie
+            setConfigCookie(mergedConfigs);
+
+            // 设置第一个共享配置为当前配置
+            setCurrentConfig(sharedConfigs[0]);
+          }
+        }
+      } catch (error) {
+        // 静默处理错误，不报错
+        console.debug('Failed to parse share_code parameter:', error);
+      }
+    };
+
+    // 在客户端执行
+    if (typeof window !== 'undefined') {
+      handleShareCode();
+    }
+
+    // 续期cookie
     renewConfigCookie();
   }, []);
 

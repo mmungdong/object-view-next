@@ -53,10 +53,13 @@ export default function ConfigModal({
     onConfigChange(config);
   }, [configs, currentConfigId, onConfigChange]);
 
-  // 当 configs 改变时，如果只有一个配置，则自动选择它
+  // 当 configs 改变时，如果只有一个配置或没有当前配置，则自动选择第一个配置
   useEffect(() => {
-    if (configs.length === 1 && currentConfigId !== configs[0].id) {
-      setCurrentConfigId(configs[0].id);
+    if (configs.length > 0 && (!currentConfigId || !configs.some(c => c.id === currentConfigId))) {
+      // 使用 setTimeout 确保在下一个渲染周期设置状态，避免在渲染期间直接设置状态
+      setTimeout(() => {
+        setCurrentConfigId(configs[0].id);
+      }, 0);
     }
   }, [configs, currentConfigId]);
 
