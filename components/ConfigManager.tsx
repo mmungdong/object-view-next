@@ -205,7 +205,7 @@ export default function ConfigManager({
           >
             {configs.map(config => (
               <option key={config.id} value={config.id}>
-                {config.name} ({config.type.toUpperCase()}) - {config.accessType === 'public' ? '公有读' : '私有'}
+                {config.name} - {config.accessType === 'public' ? '公有读' : '私有'}
               </option>
             ))}
           </select>
@@ -230,17 +230,7 @@ export default function ConfigManager({
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">存储类型 *</label>
-              <select
-                value={formData.type}
-                onChange={(e) => setFormData({...formData, type: e.target.value as 'oss'})}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                disabled // 只支持OSS类型，所以禁用选择
-              >
-                <option value="oss">阿里云 OSS</option>
-              </select>
-            </div>
+            <div></div> {/* 占位符，保持网格布局 */}
 
             <div>
               <label className="block text-sm font-medium mb-1">访问类型 *</label>
@@ -326,7 +316,6 @@ export default function ConfigManager({
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">名称</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">类型</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">访问类型</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">存储桶</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">地域</th>
@@ -343,9 +332,6 @@ export default function ConfigManager({
                         当前
                       </span>
                     )}
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500 uppercase">
-                    {config.type}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                     {config.accessType === 'public' ? '公有读' : '私有'}
