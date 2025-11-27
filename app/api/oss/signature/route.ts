@@ -1,10 +1,11 @@
 import { NextRequest } from 'next/server';
-import OSS from 'ali-oss';
 
 // 配置此路由为动态路由，不进行静态导出
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  // 动态导入 ali-oss 以减小初始打包体积
+  const OSS = (await import('ali-oss')).default;
   try {
     const body = await request.json();
     const { bucket, region, accessType, accessKey, secretKey, key, expires = 3600 } = body;
