@@ -4,8 +4,6 @@ import { NextRequest } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
-  // 动态导入 ali-oss 以减小初始打包体积
-  const OSS = (await import('ali-oss')).default;
   try {
     const body = await request.json();
     const { bucket, region, accessType, accessKey, secretKey, key, expires = 3600 } = body;
@@ -26,6 +24,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 动态导入 ali-oss 以减小初始打包体积
+    const OSSModule = await import('ali-oss');
+    const OSS = OSSModule.default;
+
     // 创建 OSS 客户端
     const client = new OSS({
       region,
@@ -44,7 +46,7 @@ export async function POST(request: NextRequest) {
       setTimeout(() => reject(new Error('OSS 签名请求超时')), 30000); // 30秒超时
     });
 
-    const resultUrl = await Promise.race([signaturePromise, timeoutPromise]);
+    const resultUrl: any = await Promise.race([signaturePromise, timeoutPromise]);
 
     return new Response(
       JSON.stringify({ url: resultUrl }),

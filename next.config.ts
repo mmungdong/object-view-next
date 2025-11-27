@@ -12,11 +12,20 @@ const nextConfig: NextConfig = {
   // 关闭生产环境 source map 以减小打包体积
   productionBrowserSourceMaps: false,
   // 优化服务器组件外部包
-  experimental: {
-    serverComponentsExternalPackages: [
-      // 将 ali-oss 标记为外部包以避免将其打包进 handler
-      'ali-oss',
-    ],
+  serverExternalPackages: [
+    // 将 ali-oss 标记为外部包以避免将其打包进 handler
+    'ali-oss',
+  ],
+  // webpack 配置
+  webpack: (config) => {
+    // 将大型依赖标记为外部依赖以减小打包体积
+    config.externals = {
+      ...config.externals,
+      'ali-oss': 'commonjs ali-oss',
+      'proxy-agent': 'commonjs proxy-agent'
+    };
+
+    return config;
   },
 };
 

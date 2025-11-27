@@ -7,8 +7,6 @@ export const dynamic = 'force-dynamic';
 // 我们需要通过请求参数传递配置信息
 
 export async function GET(request: NextRequest) {
-  // 动态导入 ali-oss 以减小初始打包体积
-  const OSS = (await import('ali-oss')).default;
   try {
     const { searchParams } = new URL(request.url);
     const bucket = searchParams.get('bucket');
@@ -24,6 +22,10 @@ export async function GET(request: NextRequest) {
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
+
+    // 动态导入 ali-oss 以减小初始打包体积
+    const OSSModule = await import('ali-oss');
+    const OSS = OSSModule.default;
 
     // 创建 OSS 客户端
     const client = new OSS({
@@ -46,7 +48,7 @@ export async function GET(request: NextRequest) {
       setTimeout(() => reject(new Error('OSS 请求超时')), 30000); // 30秒超时
     });
 
-    const result = await Promise.race([listPromise, timeoutPromise]) as OSS.ListObjectResult;
+    const result: any = await Promise.race([listPromise, timeoutPromise]);
 
     // 处理文件和文件夹
     const files: any[] = [];
@@ -57,7 +59,7 @@ export async function GET(request: NextRequest) {
         if (prefix !== '/') {
           files.push({
             key: prefix,
-            name: prefix.split('/').filter(p => p !== '').pop() || '',
+            name: prefix.split('/').filter((p: string) => p !== '').pop() || '',
             isFolder: true,
             size: 0,
             lastModified: new Date()
@@ -75,7 +77,7 @@ export async function GET(request: NextRequest) {
         // 检查是否为文件夹（以 / 结尾）
         const isFolder = obj.name.endsWith('/');
         const name = isFolder
-          ? obj.name.split('/').filter(p => p !== '').pop() || ''
+          ? obj.name.split('/').filter((p: string) => p !== '').pop() || ''
           : obj.name.split('/').pop() || obj.name;
 
         files.push({

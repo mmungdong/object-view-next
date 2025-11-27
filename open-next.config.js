@@ -14,7 +14,7 @@ const openNextConfig = {
   edge: {
     external: [
       // 排除不必要的依赖
-      'ali-oss', // 将在下一步中优化
+      'ali-oss',
     ],
   },
   // 4. 优化默认函数
@@ -26,6 +26,11 @@ const openNextConfig = {
       'eslint',
       'typescript',
       '@types/*',
+    ],
+    // 将大型依赖标记为外部包
+    external: [
+      'ali-oss',
+      'proxy-agent',
     ],
   },
 };
