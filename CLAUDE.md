@@ -221,6 +221,40 @@ ShadCN UI has been integrated into the project with the following structure:
 - `start`: Start production server
 - `lint`: Run ESLint
 
+## Cloudflare Pages Deployment
+
+This project has been configured for deployment to Cloudflare Pages as a static site. The key changes made for this deployment are:
+
+### Key Changes for Cloudflare Pages
+
+1. **Removed Server-side API Routes**: All API routes in `/app/api` have been removed since Cloudflare Pages only serves static files.
+
+2. **Client-side OSS Integration**: Modified `services/storageService.ts` to use the `ali-oss` SDK directly in the browser instead of making API calls to server-side routes.
+
+3. **Static Export Configuration**: Updated `next.config.ts` with `output: 'export'` to generate static HTML files.
+
+4. **Entrypoint**: The main entrypoint is `out/index.html` which is automatically recognized by Cloudflare Pages.
+
+### Deployment Instructions
+
+1. **Build the project**:
+   ```bash
+   npm run build
+   ```
+   This generates static files in the `out/` directory.
+
+2. **Deploy to Cloudflare Pages**:
+   - Connect your Git repository to Cloudflare Pages
+   - Set the build command to: `npm run build`
+   - Set the build output directory to: `out`
+   - Deploy!
+
+### Important Notes
+
+- The static site size is approximately 2.9MB, well within Cloudflare Pages limits
+- OSS credentials are now handled client-side, so ensure proper access permissions
+- For private buckets, consider using temporary access keys with limited permissions
+
 ## Key Features
 
 - TypeScript for type safety
@@ -229,6 +263,67 @@ ShadCN UI has been integrated into the project with the following structure:
 - ESLint for code quality
 - Next.js 15 App Router for modern React development
 - Real API integration with Alibaba Cloud OSS
+
+## Development Guidelines
+
+To ensure code quality and successful deployment, always follow these guidelines:
+
+### Code Quality Checks
+
+Before committing any changes, always verify that:
+
+1. **Build Success**: Ensure the project builds without errors
+   ```bash
+   npm run build
+   ```
+
+2. **TypeScript Validation**: Check for TypeScript errors
+   ```bash
+   npx tsc --noEmit
+   ```
+
+3. **ESLint Compliance**: Run linting to catch code style issues
+   ```bash
+   npm run lint
+   ```
+
+4. **No Runtime Errors**: Test the application in development mode
+   ```bash
+   npm run dev
+   ```
+
+### Cloudflare Pages Deployment
+
+This project is specifically configured for deployment to **Cloudflare Pages** as a static site. Key deployment characteristics:
+
+- **Static Export**: The project uses `output: 'export'` in `next.config.ts` to generate static HTML files
+- **Client-side Only**: All functionality runs in the browser with no server-side dependencies
+- **Entrypoint**: Main entry file is `out/index.html`
+- **Size Optimized**: Static build is approximately 2.9MB, well within Cloudflare Pages limits
+- **No Server Functions**: Removed all API routes since Cloudflare Pages only serves static files
+
+### Deployment Verification
+
+After making changes, always verify:
+
+1. **Static Build Success**:
+   ```bash
+   npm run build
+   ```
+
+2. **Output Directory**: Confirm `out/` directory is generated with `index.html` as entrypoint
+
+3. **No TypeScript Errors**:
+   ```bash
+   npx tsc --noEmit
+   ```
+
+4. **ESLint Compliance**:
+   ```bash
+   npm run lint
+   ```
+
+Following these guidelines ensures the project remains deployable to Cloudflare Pages and maintains high code quality standards.
 
 ## Author
 
