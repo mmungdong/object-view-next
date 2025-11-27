@@ -80,6 +80,19 @@ export default function FilePreview({ file, fileUrl, onClose }: FilePreviewProps
     document.body.removeChild(link);
   };
 
+  // 添加ESC键关闭预览功能
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [onClose]);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 overflow-hidden">
       <div className="bg-white w-full max-w-4xl max-h-[90vh] flex flex-col rounded-lg shadow-xl overflow-hidden">
