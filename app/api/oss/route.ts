@@ -25,10 +25,10 @@ export async function GET(request: NextRequest) {
 
     // 动态导入 ali-oss 以减小初始打包体积
     const OSSModule = await import('ali-oss');
-    const OSS = OSSModule.default;
+    const OSSConstructor = OSSModule.default;
 
     // 创建 OSS 客户端
-    const client = new OSS({
+    const client = new OSSConstructor({
       region,
       accessKeyId: accessKey,
       accessKeySecret: secretKey,
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       setTimeout(() => reject(new Error('OSS 请求超时')), 30000); // 30秒超时
     });
 
-    const result: any = await Promise.race([listPromise, timeoutPromise]);
+    const result = await Promise.race([listPromise, timeoutPromise]) as import('ali-oss').ListObjectResult;
 
     // 处理文件和文件夹
     const files: any[] = [];
