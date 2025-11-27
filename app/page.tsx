@@ -41,10 +41,25 @@ export default function Home() {
             // 设置第一个共享配置为当前配置
             setCurrentConfig(sharedConfigs[0]);
           }
+
+          // 移除 URL 中的 share_code 参数以避免泄露
+          urlParams.delete('share_code');
+          const newUrl = urlParams.toString() ?
+            `${window.location.pathname}?${urlParams.toString()}` :
+            window.location.pathname;
+          window.history.replaceState({}, document.title, newUrl);
         }
       } catch (error) {
         // 静默处理错误，不报错
         console.debug('Failed to parse share_code parameter:', error);
+
+        // 即使解析失败，也要移除 share_code 参数
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.delete('share_code');
+        const newUrl = urlParams.toString() ?
+          `${window.location.pathname}?${urlParams.toString()}` :
+          window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
       }
     };
 

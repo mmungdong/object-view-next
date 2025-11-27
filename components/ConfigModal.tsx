@@ -155,6 +155,39 @@ export default function ConfigModal({
     }
   };
 
+  const handleShareConfig = (config: StorageConfig) => {
+    try {
+      // 创建只包含当前配置的数组
+      const shareConfig = [config];
+
+      // 将配置转换为 JSON 字符串并进行 URL 编码
+      const shareCode = encodeURIComponent(JSON.stringify(shareConfig));
+
+      // 获取当前页面的 URL（不包含查询参数）
+      const baseUrl = window.location.origin + window.location.pathname;
+
+      // 构造分享 URL
+      const shareUrl = `${baseUrl}?share_code=${shareCode}`;
+
+      // 复制到剪贴板
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        alert('分享链接已复制到剪贴板！');
+      }).catch(() => {
+        // 如果复制失败，显示 URL 并让用户手动复制
+        const textArea = document.createElement('textarea');
+        textArea.value = shareUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('分享链接已生成，请手动复制：\n\n' + shareUrl);
+      });
+    } catch (error) {
+      console.error('Failed to generate share URL:', error);
+      alert('生成分享链接失败，请重试。');
+    }
+  };
+
   const handleAddNew = () => {
     setFormData({
       name: '',
@@ -351,6 +384,12 @@ export default function ConfigModal({
                           {config.region}
                         </td>
                         <td className="px-4 py-2 whitespace-nowrap text-sm font-medium">
+                          <button
+                            onClick={() => handleShareConfig(config)}
+                            className="btn btn-secondary btn-mobile px-3 py-1 text-sm mr-2"
+                          >
+                            分享
+                          </button>
                           <button
                             onClick={() => handleEditConfig(config)}
                             className="btn btn-neutral btn-mobile px-3 py-1 text-sm mr-2"
